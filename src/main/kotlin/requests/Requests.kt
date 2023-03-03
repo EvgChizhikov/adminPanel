@@ -86,10 +86,11 @@ fun parsePlayers(json: String): ConcurrentHashMultiset<Player> {
     for (playerData in result) {
         val name = playerData["name"] as String
         val steamId = playerData["steam_id_64"] as String
-        val steamInfo = playerData["profile"] as Map<String, Any>
-        val country = steamInfo["steaminfo"]?.let { info ->
-            val infoMap = info as Map<String, Any>
-            infoMap["country"] as String?
+        val steamInfo = playerData["profile"] as Map<String, Any>?
+
+        val country = steamInfo?.let { info ->
+            val infoMap = info["steaminfo"] as Map<String, Any>?
+            infoMap?.get("country") as String?
         }
         players.add(Player(name, steamId, country, lastChanged = LocalDateTime.now()))
     }

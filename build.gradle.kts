@@ -46,3 +46,6 @@ val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "13"
 }
+tasks.getByName<CreateStartScripts>("startScripts") {
+    classpath = files("\$APP_HOME/lib/*")
+}
