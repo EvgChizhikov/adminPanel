@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Current Players</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        form {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            padding: 20px;
+            width: 500px;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+
+        label {
+            font-size: 20px;
+            display: block;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+            padding: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            border: none;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 30px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button[type="button"] {
+            background-color: #ff0000;
+            border: none;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 30px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 30px;
+        }
+
+        li {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Current Players</h1>
+<form id="get-players-form" method="GET" action="/getPlayersList">
+    <button type="submit">Get current players</button>
+</form>
+<ul id="players-list"></ul>
+<div>
+    <form id="start-coroutine-form" method="GET" action="/startCoroutine" style="display: inline-block;">
+        <button type="submit">Start coroutine</button>
+    </form>
+    <form id="stop-coroutine-form" method="GET" action="/stopCoroutine" style="display: inline-block;">
+        <button type="submit">Stop coroutine</button>
+    </form>
+</div>
+<script>
+    const getPlayersForm = document.getElementById('get-players-form');
+    const playersList = document.getElementById('players-list');
+    getPlayersForm.addEventListener('submit', event => {
+        event.preventDefault();
+        fetch('/getPlayersList')
+            .then(response => response.json())
+            .then(players => {
+                playersList.innerHTML = players.map(player =>
+                    `<li>'${player.name}' '${player.steam_id_64}' (${player.country ? player.country : 'Unknown'}) - Points: ${player.points} seconds: ${player.seconds}</li>`
+                ).join('');
+            });
+    });
+
+    const startCoroutineForm = document.getElementById('start-coroutine-form');
+    const stopCoroutineForm = document.getElementById('stop-coroutine-form');
+
+    startCoroutineForm.addEventListener('submit', event => {
+        event.preventDefault();
+        fetch('/startCoroutine')
+            .then(response => console.log(response));
+    });
+
+    stopCoroutineForm.addEventListener('submit', event => {
+        event.preventDefault();
+        fetch('/stopCoroutine')
+            .then(response => console.log(response));
+    });
+</script>
+</body>
+</html>

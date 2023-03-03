@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Form</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        form {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            padding: 20px;
+            width: 500px;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+
+        label {
+            font-size: 20px;
+            display: block;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+            padding: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            border: none;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 30px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Enter Admin Information</h1>
+<form method="POST" action="/save">
+    <label for="name">Name:</label>
+    <input type="text" name="name" id="name" th:value="${name}">
+    <br>
+    <label for="password">Password:</label>
+    <input type="text" name="password" id="password" th:value="${password}">
+    <br>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
