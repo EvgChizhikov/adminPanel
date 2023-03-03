@@ -1,8 +1,10 @@
 package api
 
+import data.GameData
 import data.Player
 import data.User
 import kotlinx.coroutines.*
+import org.jetbrains.kotlin.com.google.common.collect.ConcurrentHashMultiset
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,13 +15,11 @@ import org.springframework.web.context.request.async.DeferredResult
 import requests.getListOfPlayers
 import requests.login
 
-public var playersToSave: HashSet<Player> = mutableSetOf<Player>() as HashSet<Player>
-public var playersOnServer: HashSet<Player> = mutableSetOf<Player>() as HashSet<Player>
 
 @Controller
-class Controller {
+class Controller() {
 
-
+    private val gameData = GameData.instance
     val user = User.getInstance()
     var cookies = ""
 
@@ -34,28 +34,25 @@ class Controller {
                 while (isActive) {
 
                     delay(1000)
-                    playersOnServer = getListOfPlayers(cookies = cookies)
-                    delay(60000)
+                    gameData.playersOnServer = getListOfPlayers(cookies = cookies)
+                    delay(5000)
                     val playersAfterDelay = getListOfPlayers(cookies = cookies)
                     playersAfterDelay.forEach {
-                        if (playersOnServer.contains(it)) {
-                            if (!playersToSave.contains(it)) {
+                        if (gameData.playersOnServer.contains(it)) {
+                            if (!gameData.playersToSave.contains(it)) {
                                 it.addSeconds()
-                                playersToSave.add(it)
+                                gameData.addPlayer(it)
                             } else {
-                                val bufferPlayer = playersToSave.first { el -> el.steam_id_64 == it.steam_id_64 }
-                                playersToSave.remove(bufferPlayer)
-                                bufferPlayer.addSeconds()
-                                playersToSave.add(bufferPlayer)
+                                val bufferPlayer = gameData.getPlayer(it.steam_id_64)
+                                bufferPlayer?.addSeconds()
+                                bufferPlayer?.let { gameData.updatePlayer(it) }
 
-                                val copyOfPlayersToSave = ArrayList(playersToSave)
-                                copyOfPlayersToSave.forEach { p ->
-                                    if (p.seconds > 1800) {
-                                        val bufferPlayer1 = playersToSave.first { el -> el.steam_id_64 == p.steam_id_64 }
-                                        playersToSave.remove(bufferPlayer1)
-                                        bufferPlayer1.seconds = 0
-                                        bufferPlayer1.addPoint()
-                                        playersToSave.add(bufferPlayer1)
+                                gameData.playersToSave.forEach { p ->
+                                    if (p.seconds > 200) {
+                                        val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
+                                        bufferPlayer1?.addPoint()
+                                        bufferPlayer1?.seconds = 0
+                                        bufferPlayer1?.let { gameData.updatePlayer(it) }
                                     }
                                 }
                             }
@@ -107,23 +104,15 @@ class Controller {
 
     @GetMapping("/getPlayersList")
     @ResponseBody
-    fun getPlayersButton(): HashSet<Player> {
+    fun getPlayersButton(): ConcurrentHashMultiset<Player> {
         println("update")
-//        val playersFromServer = getListOfPlayers(cookies = cookies)
-//        playersFromServer.forEach {
-//            if (!playersToSave.contains(it)) {
-//                playersToSave.add(it)
-//                println("В список был добавлен $it")
-//            }
-//        }
-        println(playersToSave)
-        return playersToSave
+        println(gameData.playersToSave)
+        return gameData.playersToSave
     }
 
     @GetMapping("/updateList")
     @ResponseBody
-    fun updateList(): HashSet<Player> {
-        return playersToSave
+    fun updateList(): ConcurrentHashMultiset<Player> {
+        return gameData.playersToSave
     }
-
 }

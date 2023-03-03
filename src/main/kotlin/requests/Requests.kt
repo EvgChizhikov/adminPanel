@@ -1,8 +1,9 @@
 package requests
 
-import api.playersToSave
 import data.Player
 import com.google.gson.Gson
+import data.GameData
+import org.jetbrains.kotlin.com.google.common.collect.ConcurrentHashMultiset
 import java.io.File
 import java.io.InputStreamReader
 import java.net.*
@@ -54,7 +55,7 @@ fun login(server: String = "http://91.210.169.105:8014", login: String, password
     return null
 }
 
-fun getListOfPlayers(serverUrl: String = "http://91.210.169.105:8014", cookies: String): HashSet<Player> {
+fun getListOfPlayers(serverUrl: String = "http://91.210.169.105:8014", cookies: String): ConcurrentHashMultiset<Player> {
     val url = URL("$serverUrl/api/get_players")
     val connection = url.openConnection() as HttpURLConnection
     connection.requestMethod = "GET"
@@ -76,11 +77,11 @@ fun getListOfPlayers(serverUrl: String = "http://91.210.169.105:8014", cookies: 
 }
 
 
-fun parsePlayers(json: String): HashSet<Player> {
+fun parsePlayers(json: String): ConcurrentHashMultiset<Player> {
     val gson = Gson()
     val data = gson.fromJson(json, Map::class.java)
 
-    val players = mutableSetOf<Player>()
+    val players = ConcurrentHashMultiset.create<Player>()
     val result = data["result"] as List<Map<String, Any>>
     for (playerData in result) {
         val name = playerData["name"] as String
@@ -93,22 +94,23 @@ fun parsePlayers(json: String): HashSet<Player> {
         players.add(Player(name, steamId, country, lastChanged = LocalDateTime.now()))
     }
 
-    return players as HashSet<Player>
+    return players
 }
 
-fun readPlayersFromJsonFile(filename: String): HashSet<Player> {
+fun readPlayersFromJsonFile(filename: String): ConcurrentHashMultiset<Player> {
     val gson = Gson()
+    val playersToSave = ConcurrentHashMultiset.create<Player>()
     if (!File(filename).readText().isNullOrEmpty()) {
         val playersArray = gson.fromJson(File(filename).readText(), Array<Player>::class.java)
-        playersToSave = HashSet(playersArray.toList())
-        return HashSet(playersArray.toList())
+        playersToSave.addAll(playersArray)
     }
-    return hashSetOf<Player>()
+    GameData.instance.playersToSave = playersToSave
+    return playersToSave
 }
 
 fun writePlayersToJsonFile(filename: String) {
     val gson = Gson()
-    val json = gson.toJson(playersToSave)
+    val json = gson.toJson(GameData.instance.playersToSave)
 
     File(filename).writeText(json)
 }

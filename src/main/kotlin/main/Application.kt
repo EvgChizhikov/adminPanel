@@ -1,6 +1,7 @@
 package main
 
-import api.playersToSave
+
+import data.GameData
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import requests.readPlayersFromJsonFile
@@ -13,19 +14,18 @@ class Application {
 }
 
 fun main(args: Array<String>) {
-
     println("Starting program...")
-    readPlayersFromJsonFile("playersData.txt")
-    if (playersToSave.isNotEmpty()) {
-        println(playersToSave)
-        val iterator = playersToSave.iterator()
+    GameData.instance.playersToSave = readPlayersFromJsonFile("playersData.txt")
+    if (GameData.instance.playersToSave.isNotEmpty()) {
+        println(GameData.instance.playersToSave)
+        val iterator = GameData.instance.playersToSave.iterator()
         while (iterator.hasNext()) {
             val player = iterator.next()
             if (player.points < 1) {
                 iterator.remove()
             }
         }
-        println(playersToSave)
+        println(GameData.instance.playersToSave)
     }
 
     runApplication<Application>(*args)
@@ -37,7 +37,5 @@ fun main(args: Array<String>) {
             writePlayersToJsonFile("playersData.txt")
         }
     })
-
-
 }
 
