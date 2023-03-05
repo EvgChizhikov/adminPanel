@@ -48,7 +48,7 @@ class Controller() {
                                 bufferPlayer?.let { gameData.updatePlayer(it) }
 
                                 gameData.playersToSave.forEach { p ->
-                                    if (p.seconds > 200) {
+                                    if (p.seconds > 50000) {
                                         val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
                                         bufferPlayer1?.addPoint()
                                         bufferPlayer1?.seconds = 0
