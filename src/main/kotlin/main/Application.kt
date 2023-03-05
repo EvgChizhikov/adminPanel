@@ -39,7 +39,7 @@ class Application {
                     }
                 }
             }
-            task.start(LocalTime.of(13, 22)) // Run the task at 9:00 every day
+            task.start(LocalTime.of(23, 59))
 
 
             runApplication<Application>(*args)

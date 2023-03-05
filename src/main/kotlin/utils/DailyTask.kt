@@ -3,11 +3,10 @@ package utils
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
 
 class DailyTask(private val task: () -> Unit) {
-    fun start(timeOfDay: LocalTime, zoneId: ZoneId = ZoneId.systemDefault()) {
+    fun start(timeOfDay: LocalTime) {
         val thread = Thread {
             while (true) {
                 val now = LocalDateTime.now(ZoneId.systemDefault())
@@ -26,7 +25,6 @@ class DailyTask(private val task: () -> Unit) {
         }
         thread.isDaemon = true
         thread.start()
-
 
     }
 
