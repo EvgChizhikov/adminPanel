@@ -5,7 +5,7 @@ import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
 
-class DailyTask(private val task: () -> Unit) {
+class DailyTaskThread(private val task: () -> Unit) {
     fun start(timeOfDay: LocalTime) {
         val thread = Thread {
             while (true) {

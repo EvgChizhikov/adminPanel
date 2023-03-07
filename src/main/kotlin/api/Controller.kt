@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.context.request.async.DeferredResult
 import requests.getListOfPlayers
 import requests.login
+import utils.DailyTaskCoroutinesPeriod
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 
 @Controller
@@ -25,48 +27,58 @@ class Controller() {
 
     private var job: Job? = null
 
-    @GetMapping("/startCoroutine")
+    @GetMapping("/example")
+    fun exampleController(
+        @RequestParam param1: Int,
+        @RequestParam param2: Int,
+        @RequestParam param3: Int,
+        @RequestParam param4: Int,
+        @RequestParam param5: Int
+    ) :String {
+        val result = "Received parameters: $param1, $param2, $param3, $param4, $param5"
+        println(result)
+        return "rasp"
+    }
+
+    @GetMapping("/example1")
+    fun exampleController() :String {
+        // Do something with the parameters
+        return "rasp"
+    }
+
+    @GetMapping("/startCoroutine1")
     @ResponseBody
-    fun startCoroutine(): DeferredResult<String> {
-        val deferredResult = DeferredResult<String>()
-        if (job == null) {
-            job = GlobalScope.launch {
-                while (isActive) {
+    fun startCoroutine1() {
 
-                    delay(1000)
-                    gameData.playersOnServer = getListOfPlayers(cookies = cookies)
-                    delay(5000)
-                    val playersAfterDelay = getListOfPlayers(cookies = cookies)
-                    playersAfterDelay.forEach {
-                        if (gameData.playersOnServer.contains(it)) {
-                            if (!gameData.playersToSave.contains(it)) {
-                                it.addSeconds()
-                                gameData.addPlayer(it)
-                            } else {
-                                val bufferPlayer = gameData.getPlayer(it.steam_id_64)
-                                bufferPlayer?.addSeconds()
-                                bufferPlayer?.let { gameData.updatePlayer(it) }
+        val task1 = DailyTaskCoroutinesPeriod(startTime = LocalTime.of(17, 33), endTime = LocalTime.of(17, 35)) {
+            println("Running task1 at ${LocalDateTime.now()}")
+            delay(1000)
+            gameData.playersOnServer = getListOfPlayers(cookies = cookies)
+            delay(60000)
+            val playersAfterDelay = getListOfPlayers(cookies = cookies)
+            playersAfterDelay.forEach {
+                if (gameData.playersOnServer.contains(it)) {
+                    if (!gameData.playersToSave.contains(it)) {
+                        it.addSeconds()
+                        gameData.addPlayer(it)
+                    } else {
+                        val bufferPlayer = gameData.getPlayer(it.steam_id_64)
+                        bufferPlayer?.addSeconds()
+                        bufferPlayer?.let { gameData.updatePlayer(it) }
 
-                                gameData.playersToSave.forEach { p ->
-                                    if (p.seconds > 50000) {
-                                        val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
-                                        bufferPlayer1?.addPoint()
-                                        bufferPlayer1?.seconds = 0
-                                        bufferPlayer1?.let { gameData.updatePlayer(it) }
-                                    }
-                                }
+                        gameData.playersToSave.forEach { p ->
+                            if (p.seconds >= 1800) {
+                                val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
+                                bufferPlayer1?.addOnePoint()
+                                bufferPlayer1?.seconds = 0
+                                bufferPlayer1?.let { gameData.updatePlayer(it) }
                             }
                         }
                     }
                 }
             }
-            println("Coroutine started.")
-            deferredResult.setResult("Coroutine started.")
-        } else {
-            println("Coroutine is already running.")
-            deferredResult.setResult("Coroutine is already running.")
         }
-        return deferredResult
+        task1.start()
     }
 
     @GetMapping("/stopCoroutine")

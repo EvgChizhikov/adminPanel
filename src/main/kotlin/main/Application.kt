@@ -6,10 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import requests.readPlayersFromJsonFile
 import requests.writePlayersToJsonFile
-import utils.DailyTask
+import utils.DailyTaskCoroutinesOnce
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
 
 
 @SpringBootApplication(scanBasePackages = ["api", "configuration"])
@@ -30,8 +29,8 @@ class Application {
                 }
             }
 
-            val task = DailyTask {
-                println("Running task at ${LocalDateTime.now()}")
+            val task = DailyTaskCoroutinesOnce {
+                println("Everyone got minus one point ${LocalDateTime.now()}")
                 GameData.instance.playersToSave.forEach { player ->
                     if (player.points > 0) {
                         player.points -= 1

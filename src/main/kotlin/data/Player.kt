@@ -30,7 +30,13 @@ data class Player(
         this.lastChanged = LocalDateTime.now()
     }
 
-    fun addPoint() {
+    fun addOnePoint() {
         this.points += 1
+    }
+    fun addTwoPoint() {
+        this.points += 2
+    }
+    fun addThreePoint() {
+        this.points += 3
     }
 }
