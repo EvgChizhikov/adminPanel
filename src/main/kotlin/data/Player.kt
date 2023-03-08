@@ -32,11 +32,14 @@ data class Player(
 
     fun addOnePoint() {
         this.points += 1
+        this.lastChanged = LocalDateTime.now()
     }
     fun addTwoPoint() {
         this.points += 2
+        this.lastChanged = LocalDateTime.now()
     }
     fun addThreePoint() {
         this.points += 3
+        this.lastChanged = LocalDateTime.now()
     }
 }
