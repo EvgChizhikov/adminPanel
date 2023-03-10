@@ -50,7 +50,7 @@ class Controller() {
     @ResponseBody
     fun startCoroutine1() {
 
-        val task1 = DailyTaskCoroutinesPeriod(startTime = LocalTime.of(21, 59), endTime = LocalTime.of(23, 59)) {
+        val task1 = DailyTaskCoroutinesPeriod(startTime = LocalTime.of(12, 33), endTime = LocalTime.of(17, 35)) {
             println("Running task1 at ${LocalDateTime.now()}")
             delay(1000)
             gameData.playersOnServer = getListOfPlayers(cookies = cookies)
@@ -126,10 +126,5 @@ class Controller() {
     @ResponseBody
     fun updateList(): ConcurrentHashMultiset<Player> {
         return gameData.playersToSave
-    }
-
-    @GetMapping("/rasp")
-    fun toSchedules(): String {
-        return "rasp"
     }
 }
