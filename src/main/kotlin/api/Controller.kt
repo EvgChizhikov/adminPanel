@@ -3,7 +3,8 @@ package api
 import data.GameData
 import data.Player
 import data.User
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import org.jetbrains.kotlin.com.google.common.collect.ConcurrentHashMultiset
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -29,28 +30,35 @@ class Controller() {
 
     @GetMapping("/example")
     fun exampleController(
-        @RequestParam param1: Int,
-        @RequestParam param2: Int,
-        @RequestParam param3: Int,
-        @RequestParam param4: Int,
-        @RequestParam param5: Int
-    ) :String {
-        val result = "Received parameters: $param1, $param2, $param3, $param4, $param5"
+        @RequestParam startHours: Int,
+        @RequestParam startMinutes: Int,
+        @RequestParam endHours: Int,
+        @RequestParam endMinutes: Int,
+        @RequestParam multiple: Int
+    ): String {
+        val result = "Received parameters: $startHours, $startMinutes, $endHours, $endMinutes, $multiple"
         println(result)
         return "rasp"
     }
 
     @GetMapping("/example1")
-    fun exampleController() :String {
+    fun exampleController(): String {
         // Do something with the parameters
         return "rasp"
     }
 
     @GetMapping("/startCoroutine1")
-    @ResponseBody
-    fun startCoroutine1() {
-
-        val task1 = DailyTaskCoroutinesPeriod(startTime = LocalTime.of(12, 33), endTime = LocalTime.of(17, 35)) {
+    fun startCoroutine1(
+        @RequestParam startHours: Int,
+        @RequestParam startMinutes: Int,
+        @RequestParam endHours: Int,
+        @RequestParam endMinutes: Int,
+        @RequestParam multiple: Int
+    ): String {
+        val task1 = DailyTaskCoroutinesPeriod(
+            startTime = LocalTime.of(startHours, startMinutes),
+            endTime = LocalTime.of(endHours, endMinutes)
+        ) {
             println("Running task1 at ${LocalDateTime.now()}")
             delay(1000)
             gameData.playersOnServer = getListOfPlayers(cookies = cookies)
@@ -79,6 +87,7 @@ class Controller() {
             }
         }
         task1.start()
+        return "rasp"
     }
 
     @GetMapping("/stopCoroutine")
