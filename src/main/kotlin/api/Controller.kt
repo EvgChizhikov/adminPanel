@@ -127,4 +127,9 @@ class Controller() {
     fun updateList(): ConcurrentHashMultiset<Player> {
         return gameData.playersToSave
     }
+
+    @GetMapping("/rasp")
+    fun toSchedules(): String {
+        return "rasp"
+    }
 }
