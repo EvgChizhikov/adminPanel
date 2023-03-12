@@ -29,4 +29,8 @@ class DailyTaskCoroutinesPeriod(private val startTime: LocalTime, private val en
         job?.cancel()
         job = null
     }
+
+    fun isActive(): Boolean {
+        return job?.isActive ?: false
+    }
 }
