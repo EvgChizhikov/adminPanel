@@ -26,6 +26,8 @@ class Controller() {
     val user = User.getInstance()
     var cookies = ""
     var task1: DailyTaskCoroutinesPeriod? = null
+    var task2: DailyTaskCoroutinesPeriod? = null
+    var task3: DailyTaskCoroutinesPeriod? = null
 
     @GetMapping("/example")
     fun exampleController(
@@ -88,19 +90,140 @@ class Controller() {
             }
             task1!!.start()
         } else {
-            println("Coroutine already started!")
+            println("Coroutine 1 already started!")
+        }
+        return "rasp"
+    }
+
+    @GetMapping("/startCoroutine2")
+    fun startCoroutine2(
+        @RequestParam startHours: Int,
+        @RequestParam startMinutes: Int,
+        @RequestParam endHours: Int,
+        @RequestParam endMinutes: Int,
+        @RequestParam multiple: Int
+    ): String {
+        if (task2 == null) {
+            task2 = DailyTaskCoroutinesPeriod(
+                startTime = LocalTime.of(startHours, startMinutes),
+                endTime = LocalTime.of(endHours, endMinutes)
+            ) {
+                println("Running task2 at ${LocalDateTime.now()}")
+                delay(1000)
+                gameData.playersOnServer = getListOfPlayers(cookies = cookies)
+                delay(60000)
+                val playersAfterDelay = getListOfPlayers(cookies = cookies)
+                playersAfterDelay.forEach {
+                    if (gameData.playersOnServer.contains(it)) {
+                        if (!gameData.playersToSave.contains(it)) {
+                            it.addSeconds()
+                            gameData.addPlayer(it)
+                        } else {
+                            val bufferPlayer = gameData.getPlayer(it.steam_id_64)
+                            bufferPlayer?.addSeconds()
+                            bufferPlayer?.let { gameData.updatePlayer(it) }
+
+                            gameData.playersToSave.forEach { p ->
+                                if (p.seconds >= 1800) {
+                                    val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
+                                    bufferPlayer1?.addOnePoint()
+                                    bufferPlayer1?.seconds = 0
+                                    bufferPlayer1?.let { gameData.updatePlayer(it) }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            task2!!.start()
+        } else {
+            println("Coroutine 2 already started!")
+        }
+        return "rasp"
+    }
+
+    @GetMapping("/startCoroutine3")
+    fun startCoroutine3(
+        @RequestParam startHours: Int,
+        @RequestParam startMinutes: Int,
+        @RequestParam endHours: Int,
+        @RequestParam endMinutes: Int,
+        @RequestParam multiple: Int
+    ): String {
+        if (task3 == null) {
+            task3 = DailyTaskCoroutinesPeriod(
+                startTime = LocalTime.of(startHours, startMinutes),
+                endTime = LocalTime.of(endHours, endMinutes)
+            ) {
+                println("Running task3 at ${LocalDateTime.now()}")
+                delay(1000)
+                gameData.playersOnServer = getListOfPlayers(cookies = cookies)
+                delay(60000)
+                val playersAfterDelay = getListOfPlayers(cookies = cookies)
+                playersAfterDelay.forEach {
+                    if (gameData.playersOnServer.contains(it)) {
+                        if (!gameData.playersToSave.contains(it)) {
+                            it.addSeconds()
+                            gameData.addPlayer(it)
+                        } else {
+                            val bufferPlayer = gameData.getPlayer(it.steam_id_64)
+                            bufferPlayer?.addSeconds()
+                            bufferPlayer?.let { gameData.updatePlayer(it) }
+
+                            gameData.playersToSave.forEach { p ->
+                                if (p.seconds >= 1800) {
+                                    val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
+                                    bufferPlayer1?.addOnePoint()
+                                    bufferPlayer1?.seconds = 0
+                                    bufferPlayer1?.let { gameData.updatePlayer(it) }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            task3!!.start()
+        } else {
+            println("Coroutine 3 already started!")
         }
         return "rasp"
     }
 
     @GetMapping("/stopCoroutine")
     fun stopCoroutine(): String {
-        if(task1?.isActive() == true) { //TODO поменять сравнение
+        //TODO поменять сравнение
+        if(task1?.isActive() == true) {
             task1!!.stop()
             task1 = null
-            println("Coroutine stopped!")
+            println("First coroutine stopped!")
         } else {
-            println("Coroutine does not started")
+            println("First coroutine does not started!")
+        }
+        return "rasp"
+    }
+
+    @GetMapping("/stopCoroutine2")
+    fun stopCoroutine2(): String {
+        //TODO поменять сравнение
+        if(task2?.isActive() == true) {
+            task2!!.stop()
+            task2 = null
+            println("Second coroutine stopped!")
+        } else {
+            println("Second coroutine does not started!")
+        }
+        return "rasp"
+    }
+
+    @GetMapping("/stopCoroutine3")
+    fun stopCoroutine3(): String {
+        //TODO поменять сравнение
+        if(task3?.isActive() == true) {
+            task3!!.stop()
+            task3 = null
+            println("Third coroutine stopped!")
+        } else {
+            println("Third coroutine does not started!")
         }
         return "rasp"
     }
