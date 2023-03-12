@@ -3,18 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <title>Start form</title>
+    <style>
+        body {
+            background-color: #F8F8F8;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            color: #003366;
+            margin-top: 50px;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+        label {
+            font-weight: bold;
+            margin: 10px;
+        }
+        input[type=number] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #F2F2F2;
+            font-size: 16px;
+            width: 150px;
+            margin: 10px;
+        }
+        button[type=submit] {
+            background-color: #003366;
+            color: #FFFFFF;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button[type=submit]:hover {
+            background-color: #006699;
+        }
+    </style>
 </head>
 <body>
-<form id="stop-coroutine-form1" method="GET" action="/startCoroutine1" style="display: inline-block;">
-    <label for="startHours">Enter the numbers:</label><input placeholder="Start hours" type="number" id="startHours"
-                                                             name="startHours">
-    <label for="startMinutes"></label><input placeholder="Start minutes" type="number" id="startMinutes"
-                                             name="startMinutes">
-    <label for="endHours"></label><input placeholder="End hours" type="number" id="endHours" name="endHours">
-    <label for="endMinutes"></label><input placeholder="End minutes" type="number" id="endMinutes" name="endMinutes">
-    <label for="multiple"></label><input placeholder="Multiple" type="number" id="multiple" name="multiple">
-    <button type="submit" action="/startCoroutine1">Start</button>
-    <button type="button" action="/stopCoroutine">Stop</button>
+<h1>Start Coroutine Form</h1>
+<form id="start-coroutine-form1" method="GET" action="/startCoroutine1">
+    <input placeholder="Start hours" type="number" id="startHours" name="startHours">
+    <input placeholder="Start minutes" type="number" id="startMinutes" name="startMinutes">
+    <input placeholder="End hours" type="number" id="endHours" name="endHours">
+    <input placeholder="End minutes" type="number" id="endMinutes" name="endMinutes">
+    <input placeholder="Multiple" type="number" id="multiple" name="multiple">
+    <button type="submit">Start</button>
+    <button type="submit" form="stop-coroutine-form1">Stop</button>
 </form>
+<form id="stop-coroutine-form1" method="GET" action="/stopCoroutine"></form>
 </body>
 </html>

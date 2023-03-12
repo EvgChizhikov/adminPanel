@@ -25,8 +25,7 @@ class Controller() {
     private val gameData = GameData.instance
     val user = User.getInstance()
     var cookies = ""
-
-    private var job: Job? = null
+    var task1: DailyTaskCoroutinesPeriod? = null
 
     @GetMapping("/example")
     fun exampleController(
@@ -55,53 +54,55 @@ class Controller() {
         @RequestParam endMinutes: Int,
         @RequestParam multiple: Int
     ): String {
-        val task1 = DailyTaskCoroutinesPeriod(
-            startTime = LocalTime.of(startHours, startMinutes),
-            endTime = LocalTime.of(endHours, endMinutes)
-        ) {
-            println("Running task1 at ${LocalDateTime.now()}")
-            delay(1000)
-            gameData.playersOnServer = getListOfPlayers(cookies = cookies)
-            delay(60000)
-            val playersAfterDelay = getListOfPlayers(cookies = cookies)
-            playersAfterDelay.forEach {
-                if (gameData.playersOnServer.contains(it)) {
-                    if (!gameData.playersToSave.contains(it)) {
-                        it.addSeconds()
-                        gameData.addPlayer(it)
-                    } else {
-                        val bufferPlayer = gameData.getPlayer(it.steam_id_64)
-                        bufferPlayer?.addSeconds()
-                        bufferPlayer?.let { gameData.updatePlayer(it) }
+        if (task1 == null) {
+            task1 = DailyTaskCoroutinesPeriod(
+                startTime = LocalTime.of(startHours, startMinutes),
+                endTime = LocalTime.of(endHours, endMinutes)
+            ) {
+                println("Running task1 at ${LocalDateTime.now()}")
+                delay(1000)
+                gameData.playersOnServer = getListOfPlayers(cookies = cookies)
+                delay(60000)
+                val playersAfterDelay = getListOfPlayers(cookies = cookies)
+                playersAfterDelay.forEach {
+                    if (gameData.playersOnServer.contains(it)) {
+                        if (!gameData.playersToSave.contains(it)) {
+                            it.addSeconds()
+                            gameData.addPlayer(it)
+                        } else {
+                            val bufferPlayer = gameData.getPlayer(it.steam_id_64)
+                            bufferPlayer?.addSeconds()
+                            bufferPlayer?.let { gameData.updatePlayer(it) }
 
-                        gameData.playersToSave.forEach { p ->
-                            if (p.seconds >= 1800) {
-                                val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
-                                bufferPlayer1?.addOnePoint()
-                                bufferPlayer1?.seconds = 0
-                                bufferPlayer1?.let { gameData.updatePlayer(it) }
+                            gameData.playersToSave.forEach { p ->
+                                if (p.seconds >= 1800) {
+                                    val bufferPlayer1 = gameData.getPlayer(p.steam_id_64)
+                                    bufferPlayer1?.addOnePoint()
+                                    bufferPlayer1?.seconds = 0
+                                    bufferPlayer1?.let { gameData.updatePlayer(it) }
+                                }
                             }
                         }
                     }
                 }
             }
+            task1!!.start()
+        } else {
+            println("Coroutine already started!")
         }
-        task1.start()
         return "rasp"
     }
 
     @GetMapping("/stopCoroutine")
-    @ResponseBody
     fun stopCoroutine(): String {
-        if (job != null) {
-            job?.cancel()
-            job = null
-            println("Coroutine stopped.")
-            return "Coroutine stopped."
+        if(task1?.isActive() == true) { //TODO поменять сравнение
+            task1!!.stop()
+            task1 = null
+            println("Coroutine stopped!")
         } else {
-            println("Coroutine is not running.")
-            return "Coroutine is not running."
+            println("Coroutine does not started")
         }
+        return "rasp"
     }
 
     @GetMapping("/")
