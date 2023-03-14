@@ -8,40 +8,36 @@
             background-color: #F8F8F8;
             font-family: Arial, sans-serif;
         }
-        h1 {
+        h2 {
             text-align: center;
             color: #003366;
-            margin-top: 50px;
+            margin-top: 20px;
         }
         form {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            margin-top: 50px;
-        }
-        label {
-            font-weight: bold;
-            margin: 10px;
+            margin-top: 10px;
         }
         input[type=number] {
-            padding: 10px;
+            padding: 5px;
             border: none;
             border-radius: 5px;
             background-color: #F2F2F2;
-            font-size: 16px;
+            font-size: 14px;
             width: 150px;
-            margin: 10px;
+            margin: 5px;
         }
         button[type=submit] {
             background-color: #003366;
             color: #FFFFFF;
-            padding: 10px;
+            padding: 5px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
-            margin: 10px;
+            margin: 5px;
         }
         button[type=submit]:hover {
             background-color: #006699;
@@ -49,16 +45,36 @@
     </style>
 </head>
 <body>
-<h1>Start Coroutine Form</h1>
+<h2>Start Coroutine Form</h2>
 <form id="start-coroutine-form1" method="GET" action="/startCoroutine1">
-    <input placeholder="Start hours" type="number" id="startHours" name="startHours">
-    <input placeholder="Start minutes" type="number" id="startMinutes" name="startMinutes">
-    <input placeholder="End hours" type="number" id="endHours" name="endHours">
-    <input placeholder="End minutes" type="number" id="endMinutes" name="endMinutes">
-    <input placeholder="Multiple" type="number" id="multiple" name="multiple">
+    <input placeholder="Start hours" type="number" min="0" id="startHours" name="startHours">
+    <input placeholder="Start minutes" type="number" min="0" id="startMinutes" name="startMinutes">
+    <input placeholder="End hours" type="number" min="0" id="endHours" name="endHours">
+    <input placeholder="End minutes" type="number" min="0" id="endMinutes" name="endMinutes">
+    <input placeholder="Multiple" type="number" min="0" id="multiple" name="multiple">
     <button type="submit">Start</button>
     <button type="submit" form="stop-coroutine-form1">Stop</button>
 </form>
 <form id="stop-coroutine-form1" method="GET" action="/stopCoroutine"></form>
+<form id="start-coroutine-form2" method="GET" action="/startCoroutine2">
+    <input placeholder="Start hours" type="number" min="0" id="startHours2" name="startHours">
+    <input placeholder="Start minutes" type="number" min="0" id="startMinutes2" name="startMinutes">
+    <input placeholder="End hours" type="number" min="0" id="endHours2" name="endHours">
+    <input placeholder="End minutes" type="number" min="0" id="endMinutes2" name="endMinutes">
+    <input placeholder="Multiple" type="number" min="0" id="multiple2" name="multiple">
+    <button type="submit">Start</button>
+    <button type="submit" form="stop-coroutine-form2">Stop</button>
+</form>
+<form id="stop-coroutine-form2" method="GET" action="/stopCoroutine2"></form>
+<form id="start-coroutine-form3" method="GET" action="/startCoroutine3">
+    <input placeholder="Start hours" type="number" min="0" id="startHours3" name="startHours">
+    <input placeholder="Start minutes" type="number" min="0" id="startMinutes3" name="startMinutes">
+    <input placeholder="End hours" type="number" min="0" id="endHours3" name="endHours">
+    <input placeholder="End minutes" type="number" min="0" id="endMinutes3" name="endMinutes">
+    <input placeholder="Multiple" type="number" min="0" id="multiple3" name="multiple">
+    <button type="submit">Start</button>
+    <button type="submit" form="stop-coroutine-form3">Stop</button>
+</form>
+<form id="stop-coroutine-form3" method="GET" action="/stopCoroutine3"></form>
 </body>
 </html>
